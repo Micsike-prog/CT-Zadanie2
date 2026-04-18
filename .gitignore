@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Build výstupy
+dist/
+build/
+*.egg-info/
+
+# Env súbory
+.env
+.env.local
+.env.production
+
+# ML váhy (veľké súbory – použiť Git LFS alebo uložiť mimo repo)
+ml/weights/*.pt
+ml/weights/*.onnx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logy
+*.log
+logs/
+
+# Docker volumes
+postgres_data/
