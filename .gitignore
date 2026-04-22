@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 *.pyo
 .venv/
+.venv311/
 venv/
 
 # Build výstupy
@@ -17,8 +18,23 @@ build/
 .env.production
 
 # ML váhy (veľké súbory – použiť Git LFS alebo uložiť mimo repo)
+*.pt
+*.onnx
 ml/weights/*.pt
 ml/weights/*.onnx
+ml/data/raw/**
+ml/data/processed/**
+ml/artifacts/training/**
+ml/artifacts/sample_predictions/**
+ml/artifacts/weights/**
+ml/data/potholes_yolov8/**
+ml/runs/**
+runs/**
+!ml/data/raw/.gitkeep
+!ml/data/processed/.gitkeep
+!ml/artifacts/sample_predictions/.gitkeep
+!ml/artifacts/weights/.gitkeep
+!ml/data/.gitkeep
 
 # IDE
 .vscode/
@@ -36,3 +52,6 @@ logs/
 
 # Docker volumes
 postgres_data/
+
+AGENTS.MD
+ZADANIE.MD
