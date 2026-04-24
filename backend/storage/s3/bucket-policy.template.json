@@ -1,0 +1,33 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowBackendImageAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<account-id>:role/<backend-or-upload-role-name>"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::<bucket-name>/uploads/*"
+    },
+    {
+      "Sid": "AllowBackendListBucketUploads",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<account-id>:role/<backend-or-upload-role-name>"
+      },
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::<bucket-name>",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": "uploads/*"
+        }
+      }
+    }
+  ]
+}
+
