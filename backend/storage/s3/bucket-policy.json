@@ -1,0 +1,17 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "AllowBackendImageAccess",
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "arn:aws:iam::797795454892:user/YOUR_IAM_USER_NAME"
+        },
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        "Resource": "arn:aws:s3:::pothole-ai-images-ct-797795454892-eu-central-1-an/uploads/originals/*"
+      }
+    ]
+  }
