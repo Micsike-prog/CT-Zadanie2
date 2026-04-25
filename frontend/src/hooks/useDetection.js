@@ -19,7 +19,7 @@ export function useDetection() {
     setError(null);
   }, []);
 
-  const handleAnalyze = useCallback(async (metadata) => {
+  const handleAnalyze = useCallback(async (metadata, token) => {
     if (!image) return;
     setAnalyzing(true);
     setError(null);
@@ -30,8 +30,8 @@ export function useDetection() {
         await new Promise((r) => setTimeout(r, 2200));
         setResults(MOCK_RESULTS);
       } else {
-        const data = await detectPotholes(image, metadata);
-        setResults(data);
+        const data = await detectPotholes(image, metadata, token);
+        setResults(data.detections || data);
       }
     } catch (err) {
       setError(err.message);

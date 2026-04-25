@@ -2,17 +2,8 @@ import { useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from "react-leaflet";
 import { SEVERITY_CONFIG } from "../../constants/severity";
 import { SeverityBadge } from "../ui/SeverityBadge";
+import { useHistory } from "../../hooks/useHistory";
 import "leaflet/dist/leaflet.css";
-
-// Mock markery – neskôr nahradiť dátami z DB / useHistory hooku
-const MOCK_MARKERS = [
-  { id: 1, lat: 48.1516, lng: 17.1077, severity: "high",   location: "Hlavná ul., Bratislava",  date: "2025-04-10", count: 3 },
-  { id: 2, lat: 48.7230, lng: 21.2611, severity: "medium", location: "Obchodná ul., Košice",    date: "2025-04-09", count: 1 },
-  { id: 3, lat: 49.2236, lng: 18.7394, severity: "low",    location: "Mierová ul., Žilina",     date: "2025-04-08", count: 5 },
-  { id: 4, lat: 48.9883, lng: 21.2394, severity: "high",   location: "Námestie SNP, Prešov",    date: "2025-04-07", count: 2 },
-  { id: 5, lat: 48.3774, lng: 17.5880, severity: "medium", location: "Štefánikova ul., Trnava", date: "2025-04-06", count: 4 },
-  { id: 6, lat: 48.6667, lng: 19.1333, severity: "low",    location: "Partizánska ul., B. Bystrica", date: "2025-04-05", count: 1 },
-];
 
 // Veľkosť kruhu podľa počtu dier
 function markerRadius(count) {
@@ -31,14 +22,18 @@ function FitBounds({ markers }) {
   return null;
 }
 
-export function PotholeMap() {
+export function PotholeMap({ token }) {
   const [filters, setFilters] = useState({ high: true, medium: true, low: true });
   const [days, setDays] = useState("7");
   const [selectedId, setSelectedId] = useState(null);
+  const { history, loading, error } = useHistory({ days }, token);
 
   const toggleFilter = (key) => setFilters(f => ({ ...f, [key]: !f[key] }));
 
-  const visibleMarkers = MOCK_MARKERS.filter(m => filters[m.severity]);
+  const markers = history
+    .filter((row) => row.lat != null && row.lng != null && row.severity)
+    .map((row) => ({ ...row, id: row.analysisId || row.id }));
+  const visibleMarkers = markers.filter(m => filters[m.severity]);
 
   const counts = {
     high:   visibleMarkers.filter(m => m.severity === "high").length,
@@ -101,7 +96,10 @@ export function PotholeMap() {
                 </CircleMarker>
               );
             })}
+            <FitBounds markers={visibleMarkers} />
           </MapContainer>
+          {loading && <div style={{ padding: 10, fontSize: 12, color: "#888", background: "#fff" }}>Načítavam záznamy...</div>}
+          {error && <div style={{ padding: 10, fontSize: 12, color: "#E8432D", background: "#fff" }}>{error}</div>}
         </div>
 
         {/* Sidebar */}

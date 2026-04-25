@@ -2,9 +2,9 @@ import { SEVERITY_CONFIG } from "../../constants/severity";
 import { SeverityBadge } from "../ui/SeverityBadge";
 
 export function DetectionList({ results, onSave }) {
-  const avgConfidence = Math.round(
-    results.reduce((s, r) => s + r.confidence, 0) / results.length * 100
-  );
+  const avgConfidence = results.length
+    ? Math.round(results.reduce((s, r) => s + r.confidence, 0) / results.length * 100)
+    : 0;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -14,6 +14,11 @@ export function DetectionList({ results, onSave }) {
           Detekované objekty
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {results.length === 0 && (
+            <div style={{ padding: 14, background: "#F7F6F2", borderRadius: 10, color: "#777", fontSize: 13 }}>
+              Model na snímke nenašiel žiadne diery.
+            </div>
+          )}
           {results.map((r) => {
             const cfg = SEVERITY_CONFIG[r.severity];
             return (
@@ -50,7 +55,7 @@ export function DetectionList({ results, onSave }) {
           ["Celkový počet", results.length],
           ["Vysoká závažnosť", results.filter(r => r.severity === "high").length],
           ["Priem. spoľahlivosť", `${avgConfidence}%`],
-          ["Stav uloženia", "Čaká"],
+          ["Stav uloženia", "Uložené"],
         ].map(([k, v]) => (
           <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #F0EFE9" }}>
             <span style={{ fontSize: 13, color: "#777" }}>{k}</span>
@@ -63,7 +68,7 @@ export function DetectionList({ results, onSave }) {
         onClick={onSave}
         style={{ background: "#111", color: "#fff", border: "none", borderRadius: 10, padding: "14px 24px", fontSize: 15, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" }}
       >
-        Uložiť do databázy
+        Zobraziť históriu
       </button>
     </div>
   );

@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useHistory } from "../../hooks/useHistory";
 import { SeverityBadge } from "../ui/SeverityBadge";
 
-export function HistoryTable() {
+export function HistoryTable({ token }) {
   const [search, setSearch] = useState("");
-  const { history, loading, error } = useHistory();
+  const { history, loading, error } = useHistory({}, token);
 
   const filtered = history.filter((row) =>
     row.location.toLowerCase().includes(search.toLowerCase())
@@ -44,6 +44,13 @@ export function HistoryTable() {
               </tr>
             </thead>
             <tbody>
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan="6" style={{ padding: 32, textAlign: "center", color: "#888", fontSize: 14 }}>
+                    Zatiaľ nie sú uložené žiadne analýzy.
+                  </td>
+                </tr>
+              )}
               {filtered.map((row, i) => (
                 <tr key={row.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid #F0EFE9" : "none" }}>
                   <td style={{ padding: "16px 20px", fontSize: 13, color: "#888", fontFamily: "'DM Mono', monospace" }}>#{row.id}</td>

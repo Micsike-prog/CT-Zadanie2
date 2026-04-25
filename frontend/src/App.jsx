@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Header } from "./components/layout/Header";
+import { LoginView } from "./components/auth/LoginView";
 import { UploadZone } from "./components/upload/UploadZone";
 import { MetadataForm } from "./components/upload/MetadataForm";
 import { AnnotatedImage } from "./components/results/AnnotatedImage";
@@ -9,11 +10,12 @@ import { PotholeMap } from "./components/map/PotholeMap";
 import { StatCard } from "./components/ui/StatCard";
 import { useDetection } from "./hooks/useDetection";
 import { STATS } from "./constants/severity";
-import { saveDetection } from "./services/api";
+import { clearStoredAuth, getStoredAuth } from "./services/api";
 
 const DEFAULT_METADATA = { location: "", date: new Date().toISOString().slice(0, 10), roadType: "mestska" };
 
 export default function App() {
+  const [auth, setAuth] = useState(() => getStoredAuth());
   const [view, setView] = useState("upload");
   const [metadata, setMetadata] = useState(DEFAULT_METADATA);
 
@@ -27,21 +29,28 @@ export default function App() {
   };
 
   const handleNavigate = (v) => {
-    if (v === "upload") resetAll();
+    if (v === "upload") {
+      resetAll();
+    } else {
+      reset();
+    }
     setView(v);
+  };
+
+  const handleLogin = (data) => {
+    setAuth({ token: data.access_token, user: data.user });
+    setView("upload");
+  };
+
+  const handleLogout = () => {
+    clearStoredAuth();
+    setAuth({ token: null, user: null });
+    resetAll();
+    setView("upload");
   };
 
   // Ak je výsledok k dispozícii, zobraz results view
   const activeView = results ? "results" : view;
-
-  const handleSave = async () => {
-    try {
-      await saveDetection({ results, metadata });
-      alert("Uložené do databázy ✓");
-    } catch (e) {
-      alert("Chyba pri ukladaní: " + e.message);
-    }
-  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#F7F6F2", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
@@ -55,7 +64,11 @@ export default function App() {
         .fade-up { animation: fadeUp .4s ease both; }
       `}</style>
 
-      <Header view={activeView} onNavigate={handleNavigate} />
+      <Header view={activeView} onNavigate={handleNavigate} user={auth.user} onLogout={handleLogout} />
+
+      {!auth.token ? (
+        <LoginView onLogin={handleLogin} />
+      ) : (
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px" }}>
 
@@ -91,7 +104,7 @@ export default function App() {
               </div>
 
               <button
-                onClick={() => handleAnalyze(metadata)}
+                onClick={() => handleAnalyze(metadata, auth.token)}
                 disabled={!imageURL || analyzing}
                 style={{
                   background: "#111", color: "#fff", border: "none", borderRadius: 10,
@@ -129,17 +142,18 @@ export default function App() {
                 </div>
                 <AnnotatedImage imageURL={imageURL} results={results} />
               </div>
-              <DetectionList results={results} onSave={handleSave} />
+              <DetectionList results={results} onSave={() => { reset(); setView("history"); }} />
             </div>
           </div>
         )}
 
         {/* HISTORY VIEW */}
-        {activeView === "history" && <div className="fade-up"><HistoryTable /></div>}
+        {activeView === "history" && <div className="fade-up"><HistoryTable token={auth.token} /></div>}
 
         {/* MAP VIEW */}
-        {activeView === "map" && <div className="fade-up"><PotholeMap /></div>}
+        {activeView === "map" && <div className="fade-up"><PotholeMap token={auth.token} /></div>}
       </main>
+      )}
     </div>
   );
 }

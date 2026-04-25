@@ -1,4 +1,4 @@
-export function Header({ view, onNavigate }) {
+export function Header({ view, onNavigate, user, onLogout }) {
   return (
     <header style={{
       background: "#fff", borderBottom: "1px solid #E8E7E2",
@@ -21,30 +21,51 @@ export function Header({ view, onNavigate }) {
           </div>
         </div>
 
-        {/* Nav */}
-        <nav style={{ display: "flex", gap: 4 }}>
-          {[["upload", "Nahrať"], ["history", "História"], ["map", "Mapa"]].map(([v, label]) => {
-            const active = view === v || (v === "upload" && view === "results");
-            return (
-              <button
-                key={v}
-                onClick={() => onNavigate(v)}
-                style={{
-                  background: active ? "#111" : "none",
-                  color: active ? "#fff" : "#666",
-                  border: "none", cursor: "pointer",
-                  padding: "10px 18px", borderRadius: 8,
-                  fontSize: 14, fontWeight: 500, fontFamily: "inherit",
-                  transition: "all .2s",
-                }}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </nav>
-
-        
+        {user && (
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <nav style={{ display: "flex", gap: 4 }}>
+              {[["upload", "Nahrať"], ["history", "História"], ["map", "Mapa"]].map(([v, label]) => {
+                const active = view === v || (v === "upload" && view === "results");
+                return (
+                  <button
+                    key={v}
+                    onClick={() => onNavigate(v)}
+                    style={{
+                      background: active ? "#111" : "none",
+                      color: active ? "#fff" : "#666",
+                      border: "none", cursor: "pointer",
+                      padding: "10px 18px", borderRadius: 8,
+                      fontSize: 14, fontWeight: 500, fontFamily: "inherit",
+                      transition: "all .2s",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </nav>
+            <div style={{ width: 1, height: 24, background: "#E8E7E2" }} />
+            <div style={{ fontSize: 12, color: "#777", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {user.email}
+            </div>
+            <button
+              onClick={onLogout}
+              style={{
+                background: "#fff",
+                color: "#111",
+                border: "1.5px solid #E0DFD8",
+                borderRadius: 8,
+                padding: "8px 12px",
+                fontSize: 13,
+                fontWeight: 500,
+                fontFamily: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              Odhlásiť
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
