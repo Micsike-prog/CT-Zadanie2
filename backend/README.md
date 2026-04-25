@@ -181,24 +181,3 @@ Dôležité App Service settings:
 
 Podľa Microsoft Learn pri Linux custom containeri treba pri inom porte než `80` nastaviť `WEBSITES_PORT`. Zdroj:
 https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container
-
-## Jednoduché migrácie bez Alembicu
-
-Používame jednoduchý skriptový režim bez Alembicu:
-
-1. `backend/db/migrations/*.sql` sú source of truth pre deploy.
-2. `backend/db/schema.sql` drž ako snapshot celej aktuálnej schémy.
-3. Nové zmeny pridávaj ako `backend/db/migrations/NNN_name.sql`.
-4. Migrácie púšťaj cez:
-
-```powershell
-py -3 backend/scripts/migrate.py
-```
-
-Pomocný generátor nového migration súboru:
-
-```powershell
-py -3 backend/scripts/create_migration.py add_new_column
-```
-
-Skript eviduje aplikované migrácie v tabuľke `schema_migrations`.
