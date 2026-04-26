@@ -325,8 +325,6 @@ Model:
 
 ## 12. Nasadenie do cloudu
 
-Odporúčaná finálna architektúra pre odovzdanie:
-
 | Komponent | Odporúčaný provider | Poznámka |
 |---|---|---|
 | Frontend | Vercel | jednoduché nasadenie Vite buildu |
@@ -335,25 +333,12 @@ Odporúčaná finálna architektúra pre odovzdanie:
 | Storage | AWS S3 | obrázky |
 | AI inferencia | AWS Lambda | serverless AI spracovanie |
 
-Takéto rozdelenie pekne demonštruje multi-cloud prístup a zároveň spĺňa podmienku využitia služby od iného providera.
-
 ## 13. Tímový príspevok
-
-Túto sekciu odporúčam doplniť pred odovzdaním podľa reálnych členov tímu a commit histórie.
 
 | Člen tímu | Zodpovednosť | Konkrétny príspevok |
 |---|---|---|
-| Meno 1 | Frontend / team lead | UI, upload flow, výsledky, koordinácia |
-| Meno 2 | Backend a databáza | FastAPI API, auth, PostgreSQL schéma |
-| Meno 3 | ML a cloud | YOLOv8, ONNX export, AWS Lambda, S3 |
+| Kristína Gvozdiaková | Frontend| UI, upload flow |
+| Peter Zeleňák | Backend a databáza | FastAPI API, auth, PostgreSQL schéma |
+| Michal Hajdu | ML, Cloud - Team lead | YOLOv8, ONNX export, AWS Lambda, S3 |
 
-K tejto tabuľke je vhodné priradiť aj konkrétne issue, tasky alebo vetvy, aby bola aktívna účasť ľahko dohľadateľná v Git histórii.
 
-## 14. Ďalšia dokumentácia
-
-Podrobnejšie technické poznámky ostávajú aj v podpriečinkoch:
-
-- `backend/db/README.md`
-- `backend/storage/s3/README.md`
-
-Základný vstupný dokument pre projekt je odteraz tento koreňový `README.md`.
