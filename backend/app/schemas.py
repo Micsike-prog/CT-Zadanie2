@@ -59,3 +59,13 @@ class HistoryItem(BaseModel):
     severity: Severity | None
     avgConfidence: float | None
     imageUrl: str
+
+
+class HistoryDetail(BaseModel):
+    analysisId: str
+    imageUrl: str
+    date: date
+    location: str
+    roadType: str | None
+    summary: DetectionSummary
+    detections: list[DetectionResponse]

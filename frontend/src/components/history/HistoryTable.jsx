@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useHistory } from "../../hooks/useHistory";
 import { SeverityBadge } from "../ui/SeverityBadge";
 
-export function HistoryTable({ token }) {
+export function HistoryTable({ token, onDetail, detailLoading, detailError }) {
   const [search, setSearch] = useState("");
   const { history, loading, error } = useHistory({}, token);
 
@@ -24,6 +24,11 @@ export function HistoryTable({ token }) {
           style={{ padding: "10px 16px", border: "1.5px solid #E0DFD8", borderRadius: 10, fontSize: 14, fontFamily: "inherit", width: 240, outline: "none" }}
         />
       </div>
+      {detailError && (
+        <div style={{ background: "#FFF4F2", border: "1px solid #F2B8AE", borderRadius: 10, padding: "12px 16px", color: "#B72E1D", fontSize: 14, marginBottom: 16 }}>
+          {detailError}
+        </div>
+      )}
 
       <div style={{ background: "#fff", border: "1px solid #E8E7E2", borderRadius: 16, overflow: "hidden" }}>
         {loading && (
@@ -65,8 +70,22 @@ export function HistoryTable({ token }) {
                     <SeverityBadge severity={row.severity} />
                   </td>
                   <td style={{ padding: "16px 20px" }}>
-                    <button style={{ background: "#fff", color: "#111", border: "1.5px solid #E0DFD8", borderRadius: 10, padding: "6px 14px", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>
-                      Detail
+                    <button
+                      onClick={() => onDetail(row.analysisId)}
+                      disabled={detailLoading === row.analysisId}
+                      style={{
+                        background: "#fff",
+                        color: "#111",
+                        border: "1.5px solid #E0DFD8",
+                        borderRadius: 10,
+                        padding: "6px 14px",
+                        fontSize: 13,
+                        cursor: detailLoading === row.analysisId ? "wait" : "pointer",
+                        fontFamily: "inherit",
+                        opacity: detailLoading === row.analysisId ? .55 : 1,
+                      }}
+                    >
+                      {detailLoading === row.analysisId ? "Nacitavam" : "Detail"}
                     </button>
                   </td>
                 </tr>

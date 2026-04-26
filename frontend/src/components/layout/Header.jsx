@@ -25,7 +25,7 @@ export function Header({ view, onNavigate, user, onLogout }) {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <nav style={{ display: "flex", gap: 4 }}>
               {[["upload", "Nahrať"], ["history", "História"], ["map", "Mapa"]].map(([v, label]) => {
-                const active = view === v || (v === "upload" && view === "results");
+                const active = view === v || (v === "upload" && view === "results") || (v === "history" && view === "history-detail");
                 return (
                   <button
                     key={v}

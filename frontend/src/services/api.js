@@ -85,3 +85,20 @@ export async function fetchHistory(filters = {}, token) {
 
   return response.json();
 }
+
+/**
+ * NaÄÃ­ta detail uloÅ¾enej analÃ½zy vrÃ¡tane detekciÃ­.
+ * @param {string} analysisId
+ * @returns {Promise<Object>}
+ */
+export async function fetchHistoryDetail(analysisId, token) {
+  const response = await fetch(`${BASE_URL}/history/${analysisId}`, {
+    headers: authHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.status === 404 ? "AnalÃ½za sa nenaÅ¡la." : `Chyba servera: ${response.status}`);
+  }
+
+  return response.json();
+}

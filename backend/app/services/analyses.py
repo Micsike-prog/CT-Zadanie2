@@ -177,3 +177,50 @@ def list_history(user_id: UUID, severity: str | None, days: int | None) -> list[
         }
         for row in rows
     ]
+
+
+def get_history_detail(user_id: UUID, analysis_id: UUID) -> dict | None:
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                  id, created_at, captured_at, location_text, road_type,
+                  detection_count, max_severity, avg_confidence, original_s3_key
+                FROM analyses
+                WHERE id = %s AND user_id = %s
+                """,
+                (analysis_id, user_id),
+            )
+            analysis = cur.fetchone()
+            if not analysis:
+                return None
+
+            cur.execute(
+                """
+                SELECT
+                  detection_index, x, y, w, h, confidence, severity
+                FROM detections
+                WHERE analysis_id = %s
+                ORDER BY detection_index
+                """,
+                (analysis_id,),
+            )
+            detections = cur.fetchall()
+
+    return {
+        **analysis,
+        "avg_confidence": decimal_to_float(analysis["avg_confidence"]),
+        "detections": [
+            {
+                "id": row["detection_index"],
+                "x": decimal_to_float(row["x"]),
+                "y": decimal_to_float(row["y"]),
+                "w": decimal_to_float(row["w"]),
+                "h": decimal_to_float(row["h"]),
+                "confidence": decimal_to_float(row["confidence"]),
+                "severity": row["severity"],
+            }
+            for row in detections
+        ],
+    }

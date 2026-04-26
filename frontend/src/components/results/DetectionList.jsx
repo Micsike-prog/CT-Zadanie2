@@ -1,7 +1,7 @@
 import { SEVERITY_CONFIG } from "../../constants/severity";
 import { SeverityBadge } from "../ui/SeverityBadge";
 
-export function DetectionList({ results, onSave }) {
+export function DetectionList({ results, onSave, actionLabel = "Zobraziť históriu" }) {
   const avgConfidence = results.length
     ? Math.round(results.reduce((s, r) => s + r.confidence, 0) / results.length * 100)
     : 0;
@@ -64,12 +64,14 @@ export function DetectionList({ results, onSave }) {
         ))}
       </div>
 
-      <button
-        onClick={onSave}
-        style={{ background: "#111", color: "#fff", border: "none", borderRadius: 10, padding: "14px 24px", fontSize: 15, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" }}
-      >
-        Zobraziť históriu
-      </button>
+      {onSave && (
+        <button
+          onClick={onSave}
+          style={{ background: "#111", color: "#fff", border: "none", borderRadius: 10, padding: "14px 24px", fontSize: 15, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" }}
+        >
+          {actionLabel}
+        </button>
+      )}
     </div>
   );
 }

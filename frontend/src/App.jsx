@@ -10,7 +10,7 @@ import { PotholeMap } from "./components/map/PotholeMap";
 import { StatCard } from "./components/ui/StatCard";
 import { useDetection } from "./hooks/useDetection";
 import { STATS } from "./constants/severity";
-import { clearStoredAuth, getStoredAuth } from "./services/api";
+import { clearStoredAuth, fetchHistoryDetail, getStoredAuth } from "./services/api";
 
 const DEFAULT_METADATA = { location: "", date: new Date().toISOString().slice(0, 10), roadType: "mestska" };
 
@@ -18,6 +18,9 @@ export default function App() {
   const [auth, setAuth] = useState(() => getStoredAuth());
   const [view, setView] = useState("upload");
   const [metadata, setMetadata] = useState(DEFAULT_METADATA);
+  const [historicalResult, setHistoricalResult] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(null);
+  const [detailError, setDetailError] = useState(null);
 
   const { image, imageURL, analyzing, results, error, handleFile, handleAnalyze, reset } = useDetection();
 
@@ -25,16 +28,41 @@ export default function App() {
 
   const resetAll = () => {
     reset();
+    setHistoricalResult(null);
+    setDetailError(null);
     setMetadata({ ...DEFAULT_METADATA, date: new Date().toISOString().slice(0, 10) });
   };
 
   const handleNavigate = (v) => {
+    setHistoricalResult(null);
+    setDetailError(null);
     if (v === "upload") {
       resetAll();
     } else {
       reset();
     }
     setView(v);
+  };
+
+  const handleHistoryDetail = async (analysisId) => {
+    setDetailLoading(analysisId);
+    setDetailError(null);
+    try {
+      const data = await fetchHistoryDetail(analysisId, auth.token);
+      reset();
+      setHistoricalResult(data);
+      setView("history");
+    } catch (err) {
+      setDetailError(err.message);
+    } finally {
+      setDetailLoading(null);
+    }
+  };
+
+  const backToHistory = () => {
+    setHistoricalResult(null);
+    setDetailError(null);
+    setView("history");
   };
 
   const handleLogin = (data) => {
@@ -45,12 +73,14 @@ export default function App() {
   const handleLogout = () => {
     clearStoredAuth();
     setAuth({ token: null, user: null });
+    setHistoricalResult(null);
+    setDetailError(null);
     resetAll();
     setView("upload");
   };
 
   // Ak je výsledok k dispozícii, zobraz results view
-  const activeView = results ? "results" : view;
+  const activeView = historicalResult ? "history-detail" : results ? "results" : view;
 
   return (
     <div style={{ minHeight: "100vh", background: "#F7F6F2", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
@@ -73,7 +103,7 @@ export default function App() {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px" }}>
 
         {/* Štatistiky — skryté na results view */}
-        {activeView !== "results" && (
+        {activeView !== "results" && activeView !== "history-detail" && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 40 }} className="fade-up">
             {STATS.map((s) => <StatCard key={s.label} {...s} />)}
           </div>
@@ -147,8 +177,44 @@ export default function App() {
           </div>
         )}
 
+        {/* HISTORY DETAIL VIEW */}
+        {activeView === "history-detail" && historicalResult && (
+          <div className="fade-up">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+              <div>
+                <h1 style={{ fontSize: 26, fontWeight: 600, color: "#111", letterSpacing: "-.03em", marginBottom: 4 }}>Detail analyzy</h1>
+                <p style={{ fontSize: 14, color: "#888" }}>
+                  {historicalResult.location} - {historicalResult.date} - Najdenych {historicalResult.detections.length} dier
+                </p>
+              </div>
+              <button onClick={backToHistory} style={{ background: "#fff", color: "#111", border: "1.5px solid #E0DFD8", borderRadius: 10, padding: "12px 24px", fontSize: 14, fontWeight: 500, fontFamily: "inherit", cursor: "pointer" }}>
+                Spat na historiu
+              </button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 28 }}>
+              <div style={{ background: "#fff", border: "1px solid #E8E7E2", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ padding: "16px 20px", borderBottom: "1px solid #E8E7E2", display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: "#111" }}>Anotovany snimok</span>
+                  <span style={{ fontSize: 12, color: "#999" }}>Ulozena analyza</span>
+                </div>
+                <AnnotatedImage imageURL={historicalResult.imageUrl} results={historicalResult.detections} />
+              </div>
+              <DetectionList results={historicalResult.detections} />
+            </div>
+          </div>
+        )}
+
         {/* HISTORY VIEW */}
-        {activeView === "history" && <div className="fade-up"><HistoryTable token={auth.token} /></div>}
+        {activeView === "history" && (
+          <div className="fade-up">
+            <HistoryTable
+              token={auth.token}
+              onDetail={handleHistoryDetail}
+              detailLoading={detailLoading}
+              detailError={detailError}
+            />
+          </div>
+        )}
 
         {/* MAP VIEW */}
         {activeView === "map" && <div className="fade-up"><PotholeMap token={auth.token} /></div>}
