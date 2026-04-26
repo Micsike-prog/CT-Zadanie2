@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.venv311/
+venv/
+
+# Build výstupy
+dist/
+build/
+*.egg-info/
+
+# Env súbory
+.env
+.env.local
+.env.production
+
+# ML váhy (veľké súbory – použiť Git LFS alebo uložiť mimo repo)
+*.pt
+*.onnx
+ml/weights/*.pt
+ml/weights/*.onnx
+ml/data/raw/**
+ml/data/processed/**
+ml/artifacts/training/**
+ml/artifacts/sample_predictions/**
+ml/artifacts/weights/**
+ml/data/potholes_yolov8/**
+ml/runs/**
+runs/**
+!ml/data/raw/.gitkeep
+!ml/data/processed/.gitkeep
+!ml/artifacts/sample_predictions/.gitkeep
+!ml/artifacts/weights/.gitkeep
+!ml/data/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logy
+*.log
+logs/
+
+# Docker volumes
+postgres_data/
+
+AGENTS.MD
+ZADANIE.MD

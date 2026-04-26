@@ -1,0 +1,43 @@
+# verzia: "3.9"
+
+# služby:
+
+#   # # PostgreSQL databáza
+#   # db:
+#   #   image: postgres:15.16-alpine3.23
+#   #   restart: unless-stopped
+#   #   environment:
+#   #     POSTGRES_USER:     pothole
+#   #     POSTGRES_PASSWORD: pothole
+#   #     POSTGRES_DB:       pothole_db
+#   #   ports:
+#   #     - "5432:5432"
+#   #   volumes:
+#   #     - postgres_data:/var/lib/postgresql/data
+
+#   # # Backendová FastAPI služba
+#   # backend:
+#   #   build: ./backend
+#   #   restart: unless-stopped
+#   #   ports:
+#   #     - "8000:8000"
+#   #   environment:
+#   #     DATABASE_URL: postgresql://pothole:pothole@db:5432/pothole_db
+#   #   depends_on:
+#   #     - db
+#   #   volumes:
+#   #     - ./backend:/app          # automatické načítanie zmien počas vývoja
+#   #     - ./ml/weights:/app/weights
+
+#   # React frontend rozhranie (len pre produkčný build)
+#   # Pre vývoj radšej: cd frontend && npm run dev
+#   frontend:
+#     build: ./frontend
+#     restart: unless-stopped
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - backend
+
+# volumes:
+#   postgres_data:

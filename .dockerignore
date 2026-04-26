@@ -1,0 +1,10 @@
+*
+!lambda/
+!lambda/app.py
+!lambda/requirements.txt
+!ml/
+!ml/runs/
+!ml/runs/detect/
+!ml/runs/detect/baseline/
+!ml/runs/detect/baseline/weights/
+!ml/runs/detect/baseline/weights/best.pt
