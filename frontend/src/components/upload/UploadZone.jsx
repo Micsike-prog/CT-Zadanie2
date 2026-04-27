@@ -68,7 +68,7 @@ export function UploadZone({ imageURL, analyzing, onFile, onReset }) {
             </svg>
           </div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "#333", marginBottom: 6 }}>Presuňte fotografiu sem</div>
-          <div style={{ fontSize: 13, color: "#999" }}>alebo kliknite pre výber súboru · JPG, PNG, HEIC</div>
+          <div style={{ fontSize: 13, color: "#999" }}>alebo kliknite pre výber súboru · JPG, PNG, WebP</div>
         </div>
       )}
       <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => onFile(e.target.files[0])} />
