@@ -67,7 +67,7 @@ flowchart LR
     U[Používateľ v prehliadači]
     FE[Frontend\nReact + Vite\nVercel]
     BE[Backend API\nFastAPI\nAzure App Service]
-    DB[(PostgreSQL)]
+    DB[(PostgreSQL - Render)]
     S3[(AWS S3)]
     L[AI inferencia\nAWS Lambda\nYOLOv8 ONNX]
 
